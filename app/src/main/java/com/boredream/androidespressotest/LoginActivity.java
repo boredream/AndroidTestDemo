@@ -2,6 +2,7 @@ package com.boredream.androidespressotest;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -53,7 +54,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //        3         用户名为空登陆                       显示请输入用户名提示信息
 //        4         密码为空进行登陆                      显示请输入密码提示信息
 //        5         用户名和密码都为空进行登陆            显示请输入用户名提示信息(由上到下以依次判断)
-//        6         用户名和密码均为空登陆                显示请输入用户名和密码提示信息
 
     /**
      * 发起登录操作
@@ -81,36 +81,42 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * 调用服务器登录接口(此处为模拟)
      */
     private void requestLogin(final String username, final String password) {
-        progressDialog.show();
+        new AsyncTask<Void, Void, Void>() {
 
-        new Thread(){
             @Override
-            public void run() {
-                // 模拟网络请求耗时
+            protected void onPreExecute() {
+                // 发起请求
+                progressDialog.show();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                // 请求ing...
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
-                // 模拟数据返回后情况
-                progressDialog.dismiss();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        // 这里简单的判断下模拟服务器的账号处理
-                        if (!username.equals("boredream") || !password.equals("123456")) {
-                            showToast("用户名或密码错误");
-                            return;
-                        }
-
-                        // 登录成功,跳转到主页
-                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                });
+                return null;
             }
-        }.start();
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                // 请求返回后
+                progressDialog.dismiss();
+
+                // 这里简单的判断下模拟服务器的账号处理
+                if (!username.equals("boredream") || !password.equals("123456")) {
+                    showToast("用户名或密码错误");
+                    return;
+                }
+
+                // 登录成功,跳转到主页
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+
+        }.execute();
     }
 
     private void showToast(String text) {
