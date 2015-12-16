@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
 
             @Override
             protected Void doInBackground(Void... params) {
-                // 请求ing...
+                // 请求ing... 模拟耗时
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

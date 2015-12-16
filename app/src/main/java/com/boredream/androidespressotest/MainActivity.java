@@ -38,6 +38,9 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 请求获取天气,接口是api商店里找的 http://apistore.baidu.com/astore/serviceinfo/1798.html
+     */
     private void getWeather(String citypinyin) {
         progressDialog.show();
 
@@ -46,19 +49,36 @@ public class MainActivity extends BaseActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        //　模拟耗时
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                         progressDialog.dismiss();
 
-                        WeatherResponse weatherResponse = new Gson().fromJson(response, WeatherResponse.class);
-                        if(weatherResponse.getErrNum() == 0) {
-                            tv_weather.setText("温度: " + weatherResponse.getRetData().getTemp());
+                        // Gson解析数据后判断使用
+                        BaseResponse br = new Gson().fromJson(response, BaseResponse.class);
+                        if(br.getErrNum() == 0) {
+                            // 比如输入错误城市时,这个破接口retData是个空集合[],直接解析会报错
+                            // 所以先解析为BaseResponse判断,成功后再解析天气数据
+                            WeatherResponse weather = new Gson().fromJson(response, WeatherResponse.class);
+                            tv_weather.setText("温度: " + weather.getRetData().getTemp());
                         } else {
-                            tv_weather.setText("获取失败");
+                            tv_weather.setText("获取失败," + br.getErrMsg());
                         }
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
                         progressDialog.dismiss();
                         showToast("获取失败");
                     }
