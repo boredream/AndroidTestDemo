@@ -1,23 +1,19 @@
 package com.boredream.androidespressotest;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
     private EditText et_username;
     private EditText et_password;
     private Button btn_login;
-
-    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,8 +27,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         et_username = (EditText) findViewById(R.id.et_username);
         et_password = (EditText) findViewById(R.id.et_password);
         btn_login = (Button) findViewById(R.id.btn_login);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("登录中...");
 
         btn_login.setOnClickListener(this);
     }
@@ -45,15 +39,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
         }
     }
-
-// ---------------------------    登录测试用例   ---------------------------
-//
-//        编号      输入/动作                            期望的输出/相应
-//        1         使用合法用户名和密码登陆              登陆成功,进入主页
-//        2         使用错误的用户名或密码登陆            显示用户名或密码错误提示信息
-//        3         用户名为空登陆                       显示请输入用户名提示信息
-//        4         密码为空进行登陆                      显示请输入密码提示信息
-//        5         用户名和密码都为空进行登陆            显示请输入用户名提示信息(由上到下以依次判断)
 
     /**
      * 发起登录操作
@@ -117,10 +102,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
 
         }.execute();
-    }
-
-    private void showToast(String text) {
-        Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
     }
 
 }
