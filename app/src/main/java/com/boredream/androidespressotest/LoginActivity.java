@@ -4,10 +4,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener {
 
@@ -21,6 +26,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         setContentView(R.layout.activity_login);
 
         initView();
+
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.ASYNC)
+    public void onEvent(String s) {
+        Log.i("DDD", "onEventBackgroundThread " + Thread.currentThread().getId() + "  " + s);
     }
 
     private void initView() {
@@ -46,20 +64,24 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
     private void login() {
         // 验证密码
         String password = et_password.getText().toString().trim();
-        if(TextUtils.isEmpty(password)) {
+        if (TextUtils.isEmpty(password)) {
             Toast.makeText(this, "请输入密码", Toast.LENGTH_SHORT).show();
             return;
         }
 
         // 验证用户名
         String username = et_username.getText().toString().trim();
-        if(TextUtils.isEmpty(username)) {
+        if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, "请输入用户名", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 验证通过
-        requestLogin(username, password);
+//        // 验证通过
+//        requestLogin(username, password);
+
+        // 登录成功,跳转到主页
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
     /**

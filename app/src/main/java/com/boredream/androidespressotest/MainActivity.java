@@ -12,6 +12,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
 
+import org.greenrobot.eventbus.EventBus;
+
 public class MainActivity extends BaseActivity {
 
     private EditText et_citypinyin;
@@ -60,11 +62,13 @@ public class MainActivity extends BaseActivity {
 
                         // Gson解析数据后判断使用
                         BaseResponse br = new Gson().fromJson(response, BaseResponse.class);
-                        if(br.getErrNum() == 0) {
+                        if (br.getErrNum() == 0) {
                             // 比如输入错误城市时,这个破接口retData是个空集合[],直接解析会报错
                             // 所以先解析为BaseResponse判断,成功后再解析天气数据
-                            WeatherResponse weather = new Gson().fromJson(response, WeatherResponse.class);
+                            final WeatherResponse weather = new Gson().fromJson(response, WeatherResponse.class);
                             tv_weather.setText("温度: " + weather.getRetData().getTemp());
+
+                            EventBus.getDefault().post("get!!!");
                         } else {
                             tv_weather.setText("获取失败," + br.getErrMsg());
                         }
